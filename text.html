@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root {
+        --color-background: #1b1b1b;
+        --color-text-default: #0b1016;
+        --white-color-background: #fff;
+        }
+        .light-scheme {
+        background: var(--white-color-background);
+        color: var(--color-text-default);
+        }
+        .dark-scheme {
+        background: var(--color-background);
+        color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <button>切换</button>
+    <div>31231231</div>
+    <script>
+        let flag = true;
+        const content = document.getElementsByTagName("body")[0];
+        const but = document.getElementsByTagName("button")[0];
+        but.onclick = function () {
+        flag = !flag;
+        if (flag) {
+            content.setAttribute("class", "light-scheme");
+        } else {
+            content.setAttribute("class", "dark-scheme");
+        }
+        };
+
+    </script>
+</body>
+</html>
