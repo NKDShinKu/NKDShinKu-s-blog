@@ -110,17 +110,17 @@ onMounted(() => {
 
     <!-- 导航部分 -->
     <div class="state">
-      <RouterLink to="/" class="item text">
+      <RouterLink to="/archives" class="item text">
         <!-- <span class="layer">7</span> -->
         <img :src="timelineIcon" alt="">
         <span class="name">文章</span>
       </RouterLink>
-      <RouterLink to="/" class="item categories">
+      <RouterLink to="/categories" class="item categories">
         <!-- <span class="layer">2</span> -->
         <img :src="categoriesIcon" alt="">
         <span class="name">分类</span>
       </RouterLink>
-      <RouterLink to="/" class="item about">
+      <RouterLink to="/about" class="item about">
         <!-- <span class="layer">→</span> -->
         <img :src="aboutIcon" alt="">
         <span class="name">关于</span>
@@ -139,7 +139,7 @@ onMounted(() => {
 
     <!-- 标签云部分 -->
     <div class="tag-cloud">
-      <RouterLink to="/" class="title">标签云</RouterLink>
+      <RouterLink to="/tags" class="title">标签云</RouterLink>
       <div class="content">
         <a v-for="tag in tags" target="_blank" :key="tag.text" :href="tag.href" class="tag" :style="{ backgroundColor: tag.color }">
           {{ tag.text }}
@@ -157,7 +157,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .userBox {
-  border-radius: 10px;
+  border-radius: 15px;
   // height: 90vh;
   position: sticky;
   top: 50px;
@@ -185,7 +185,7 @@ onMounted(() => {
     transform: rotate(1turn);
   }
   h3 {
-    color: rgb(119, 119, 119);
+    color: var(--theme-color);
     font-size: 21px;
     margin-bottom: 12px;
   }
@@ -202,7 +202,7 @@ onMounted(() => {
   justify-content: space-around;
   margin-top: 20px;
   .item {
-    color: rgb(119, 119, 119);
+    color: var(--theme-color);
     font-size: 13px;
     flex: 1;
     display: flex;

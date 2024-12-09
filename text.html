@@ -3,40 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <style>
-        :root {
-        --color-background: #1b1b1b;
-        --color-text-default: #0b1016;
-        --white-color-background: #fff;
+    <style type="text/css">
+        .ball {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ff6632;
+            position: absolute;
         }
-        .light-scheme {
-        background: var(--white-color-background);
-        color: var(--color-text-default);
-        }
-        .dark-scheme {
-        background: var(--color-background);
-        color: white;
-        }
-
     </style>
 </head>
 <body>
-    <button>切换</button>
-    <div>31231231</div>
-    <script>
-        let flag = true;
-        const content = document.getElementsByTagName("body")[0];
-        const but = document.getElementsByTagName("button")[0];
-        but.onclick = function () {
-        flag = !flag;
-        if (flag) {
-            content.setAttribute("class", "light-scheme");
-        } else {
-            content.setAttribute("class", "dark-scheme");
-        }
-        };
-
-    </script>
+    <button id="moveStart">点击触发</button>
+    <div id="ball" class="ball"></div>
 </body>
+<script>
+    window.onload = function() {
+        var ball = document.getElementById("ball");
+        var moveStart = document.getElementById("moveStart");
+        moveStart.onclick = function() {
+            var speedX = 6;
+            var speedY = 0;
+            var timer = null;
+            moveStart();
+            function moveStart() {
+                clearInterval(timer);
+                timer = setInterval(function(){ 
+                    var ballMoveY, ballMoveX;
+                    var maxMoveH = document.documentElement.clientHeight - ball.offsetHeight;
+                    var maxMoveW = document.documentElement.clientWidth - ball.offsetWidth;
+                    speedY += 6;
+                    //横向移动会有能量损耗
+                    speedX = speedX*0.99;
+
+                    ballMoveY = ball.offsetTop + speedY;
+                    ballMoveX = ball.offsetLeft + speedX;
+
+                    if(ballMoveY >= maxMoveH || ballMoveY <= 0){
+                        speedY = -speedY;
+                        ballMoveY = maxMoveH;
+                    }
+
+                    //x轴横向移动超过做大可移动宽度，就反弹折回
+                    if(ballMoveX >= maxMoveW){
+                        speedX = -speedX;
+                        ballMoveX = maxMoveW;
+                        speedX = speedX*0.95;
+                    }
+
+
+                    if(ballMoveX <= 0){
+                        speedX = -speedX;
+                        speedX = speedX*0.95;
+                    }
+
+                    //如果速度小于0.2且小球不在弹起，则不让小球在移动了
+                    if(Math.abs(speedX) < 0.2 && ballMoveY >= maxMoveH){
+                        clearInterval(timer);
+                    }
+
+                    ball.style.top = ballMoveY + 'px';
+                    ball.style.left = ballMoveX + 'px';
+                },30) 
+            }
+        }
+    }
+</script>
 </html>

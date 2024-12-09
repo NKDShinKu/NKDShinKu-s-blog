@@ -2,10 +2,10 @@
 import { ref, onMounted, nextTick } from 'vue';
 
 // 打字机需要的状态和数据
-const words = ["千恋万花启动！", "Ciallo～(∠・ω< )⌒☆"]; // "原神启动！", "星穹铁道启动！", "绝区零启动！", "千恋万花启动！", "Ciallo～(∠・ω< )⌒☆"
+const words = ["祈祷明天对于你来说又是美好的一天", "望向苍蓝的彼端", "仰望天空，注视天空，答案就在那里"]; // "原神启动！", "星穹铁道启动！", "绝区零启动！", "千恋万花启动！", "Ciallo～(∠・ω< )⌒☆"
 const currentText = ref(""); // 当前显示的文本
 const currentWordIndex = ref(0); // 当前单词的索引
-const typingInterval = ref(300); // 打字和删除的速度
+const typingInterval = ref(200); // 打字和删除的速度
 
 // 负责处理打字和删除的逻辑
 const typeWord = () => {

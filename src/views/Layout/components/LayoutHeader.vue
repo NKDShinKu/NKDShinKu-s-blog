@@ -1,13 +1,15 @@
 <script setup>
 import { useScroll } from '@vueuse/core'
-import { watch,toRefs,ref} from 'vue';
+import { watch,toRefs,ref, onMounted} from 'vue';
 import { useRoute } from 'vue-router'
+import gsap from 'gsap'
+
 
 // 滚动隐藏标题栏部分（监听滚动）
 const {  y, directions } = useScroll(window)
 const {  top: toTop, bottom: toBottom } = toRefs(directions)
 const scrollPd = ref(false)
-watch(() => {
+watch([toTop, toBottom], () => {
   if (toTop.value) {
     scrollPd.value = true
   }
@@ -24,15 +26,58 @@ const route = useRoute()
 function isActiveTab(tabPath) {
   return route.path === tabPath
 }
+
+// 搜索动画部分
+const tagRef = ref(null)
+const menuRef = ref(null)
+const searchRef = ref(null)
+onMounted(() => {
+
+})
+let isAnimating = false;
+
+const goSearch = () => {
+  if (isAnimating) return; // 如果正在执行动画，直接返回
+  isAnimating = true; // 设置为动画正在执行
+
+  const tl1 = gsap.timeline()
+    tl1.to([tagRef.value, menuRef.value], { duration: 0.3, opacity: 0, y: -50, ease: "power1.in" })
+    tl1.to('.searchBox', { display: 'flex' })
+    tl1.to('.search', { duration: 0.5, y: '-50%', ease: "bounce.in" })
+    tl1.to('.searchBox', { opacity: 1, duration: 0.9 })
+    tl1.to('.search', { width: '55vw', left: '50%', x: '-50%', padding: '0 10px', duration: 0.8, ease: "bounce.out" }, '<')
+    .call(() => {
+      isAnimating = false; // 动画完成，重置标志
+    });
+    document.body.style.overflow = 'hidden'; // 禁用滚动
+    searchRef.value.focus()
+}
+
+const reset = () => {
+  if (isAnimating) return; // 如果正在执行动画，直接返回
+
+  isAnimating = true; // 设置为动画正在执行
+
+  const tl2 = gsap.timeline()
+    tl2.to('.search', { duration: 0.5, y: -60, ease: "power1.in" })
+    tl2.to([tagRef.value, menuRef.value], { duration: 0.8, opacity: 1, y: 0, ease: "bounce.out" })
+    tl2.to('.searchBox', { opacity: 0, duration: 0.9 }, '<')
+    tl2.to('.search', { width: '28vw', left: '', x: '' }, '<')
+    tl2.to('.searchBox', { display: 'none' })
+    .call(() => {
+      isAnimating = false; // 动画完成，重置标志
+    });
+    document.body.style.overflow = ''; // 恢复滚动
+}
 </script>
 <template>
   <div class="header" :style="{backgroundColor: y < windowHeight * 0.55 ? 'var(--theme-header-bkcolor-1)' : 'var(--theme-header-bkcolor-2)' }" :class="{fixed: y < windowHeight * 0.55 || scrollPd}">
 
     <div class="content">
-      <div class="tag">
+      <div class="tag"  ref="tagRef">
         <RouterLink :style="{color: y < windowHeight * 0.55 ? 'var(--theme-header-color-1)' :'var(--theme-header-color-2)'}" to="/">NKDShinKu</RouterLink>
       </div>
-      <ul class="menu">
+      <ul class="menu"  ref="menuRef">
         <li class="isA">
           <RouterLink :class="{ active: isActiveTab('/home') }" :style="{color: y < windowHeight * 0.55 ? 'var(--theme-header-color-1)' :'var(--theme-header-color-2)'}" to="/">
             <svg t="1733225703964" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9473" width="200" height="200"><path d="M203.234021 308.661722a25.150065 25.150065 0 0 1-16.568863-44.072975l8.349822-7.303579a25.150065 25.150065 0 1 1 33.107546 37.855879l-8.309582 7.283459a25.049465 25.049465 0 0 1-16.578923 6.237216zM268.986352 249.931289a25.150065 25.150065 0 0 1-16.900844-43.771173l12.786293-11.589151 21.256835-19.51645a25.150065 25.150065 0 1 1 34.012949 37.041016l-21.337316 19.566751-0.12072 0.11066-12.846653 11.64951a25.069585 25.069585 0 0 1-16.850544 6.508837z" p-id="9474" fill="#8a8a8a"></path><path d="M845.80813 1024H637.95793a73.679631 73.679631 0 0 1-73.568971-73.589091V847.134681a23.329201 23.329201 0 0 0-23.29902-23.299021h-68.659679a23.329201 23.329201 0 0 0-23.29902 23.299021v103.276228a73.679631 73.679631 0 0 1-73.589091 73.589091h-208.242541a73.669571 73.669571 0 0 1-73.589091-73.589091V543.170991A23.2789 23.2789 0 0 0 76.135651 520.606352l-2.152846-0.563361a72.049907 72.049907 0 0 1-51.919794-53.438859 73.780232 73.780232 0 0 1 22.132057-72.009667l83.498217-75.661457a25.150065 25.150065 0 0 1 33.771508 37.222097l-83.498217 75.651397a23.18836 23.18836 0 0 0-7.042019 22.956979 22.293018 22.293018 0 0 0 16.096042 16.669464l1.488884 0.392341a73.538791 73.538791 0 0 1 55.470984 71.305465v407.280158a23.329201 23.329201 0 0 0 23.299021 23.29902h208.242541a23.329201 23.329201 0 0 0 23.29902-23.29902V847.134681a73.669571 73.669571 0 0 1 73.589091-73.589092h68.639559a73.669571 73.669571 0 0 1 73.639391 73.589092v103.276228a23.329201 23.329201 0 0 0 23.29902 23.29902h207.82002a23.329201 23.329201 0 0 0 23.299021-23.29902v-399.584238a73.739992 73.739992 0 0 1 50.14923-69.715981 178.062463 178.062463 0 0 0 21.468096-8.862883 23.319141 23.319141 0 0 0 5.231213-38.2784l-422.521097-377.703681a23.2286 23.2286 0 0 0-31.186081 0.11066l-110.740768 100.600262a25.150065 25.150065 0 0 1-33.811748-37.222097l110.760888-100.600261a73.438191 73.438191 0 0 1 98.447416-0.422521l422.521097 377.693621a73.619271 73.619271 0 0 1-16.428022 120.851094 229.589916 229.589916 0 0 1-27.544352 11.49861 23.459981 23.459981 0 0 0-16.096042 22.132057v399.584238a73.679631 73.679631 0 0 1-73.548851 73.508611z" p-id="9475" :style="{fill: y < windowHeight * 0.55 ? 'var(--theme-header-color-1)' :'var(--theme-header-color-2)'}"></path></svg>
@@ -73,13 +118,19 @@ function isActiveTab(tabPath) {
           </RouterLink>
         </li>
       </ul>
-      <div :style="{color: y < windowHeight * 0.55 ? 'rgb(250, 250, 250)' :'rgb(60, 60, 60)'}" class="right">
-        <input class="search" type="text">
+      <div  @click="goSearch" :style="{color: y < windowHeight * 0.55 ? 'rgb(250, 250, 250)' :'rgb(60, 60, 60)'}" class="right">
         搜索
       </div>
+      <input ref="searchRef" placeholder="搜索内容" class="search" type="text">
     </div>
-
   </div>
+
+  <div class="searchBox" @click.self="reset">
+    <div class="searchContent">
+      <div class="empty">空空如也</div>
+    </div>
+  </div>
+
 </template>
 <style scoped lang="scss">
 .header {
@@ -88,7 +139,7 @@ function isActiveTab(tabPath) {
   backdrop-filter: saturate(1.8) blur(20px);
   width: 100vw;
   height: 50px;
-  z-index: 10;
+  z-index: 11;
   color: rgb(250, 250, 250);
   font-size: 16px;
   transition: all 0.5s ease-in-out;
@@ -102,7 +153,9 @@ function isActiveTab(tabPath) {
     display: flex;
     justify-content: space-between;
     font-size: 20;
+    position: relative;
     .tag {
+      // transform: translateX(-100vw);
       padding: 0 15px;
       margin-right: 15px;
       font-size: 20px;
@@ -112,6 +165,7 @@ function isActiveTab(tabPath) {
       }
     }
     .menu {
+      // transform: translateX(-100vw);
       display: flex;
       flex: 1;
       height: 50px;
@@ -176,11 +230,46 @@ function isActiveTab(tabPath) {
       height: 50px;
       line-height: 50px;
       margin: 0 15px;
-      .search {
+      cursor: pointer;
+    }
+    .right:hover {
+      transform: scale(1.05);
+    }
+    .search {
         border-radius: 5px;
-        height: 25px;
-        background-color: rgba(253, 253, 253, 0.3);
+        height: 35px;
+        width:28vw;
+        background-color: rgba(253, 253, 253, 0.5);
+        position: absolute;
+        transform: translateY(-60px);
+        top: 50%;
       }
+  }
+}
+.searchBox {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  display: none;
+  justify-content: center;
+  padding: 60px;
+  background-color: rgba(200, 200, 200, 0.5);
+  z-index: 10;
+  opacity: 0;
+  .searchContent {
+    border-radius: 10px;
+    width: 55vw;
+    height: 75vh;
+    // background-color: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(rgba(200, 200, 200, 0.8), rgba(215, 215, 215, 0.8)),
+    url('../../../assets/images/search-bk.jpeg');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .empty {
+      font-weight: 700;
+      font-size: 30px;
     }
   }
 }
@@ -192,4 +281,5 @@ function isActiveTab(tabPath) {
   background-color: rgb(37, 166, 187);
   border-radius: 20px;
 }
+
 </style>

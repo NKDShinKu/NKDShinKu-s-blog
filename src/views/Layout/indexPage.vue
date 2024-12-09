@@ -3,6 +3,11 @@ import LayoutHeader from './components/LayoutHeader.vue'
 import LayoutNav from './components/LayoutNav.vue'
 import LayoutFooter from './components/LayoutFooter.vue'
 import LayoutTitle from './components/LayoutTitle.vue'
+import LayoutDetail from './components/LayoutDetail.vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+console.log(route)
 </script>
 <template>
     <div id="building">
@@ -27,11 +32,17 @@ import LayoutTitle from './components/LayoutTitle.vue'
     <div class="main">
       <div class="layer">
         <div class="content">
-          <RouterView></RouterView>
+          <router-view v-slot="{ Component }">
+              <keep-alive>
+                <component :is="Component" />
+              </keep-alive>
+          </router-view>
+
         </div>
         <div class="nav" ref="myElement">
           <!-- :class="{fixed: navPosition.top < 60}" -->
-          <LayoutNav></LayoutNav>
+           <LayoutDetail v-if="route.name === 'details'"></LayoutDetail>
+          <LayoutNav v-else></LayoutNav>
         </div>
       </div>
     </div>

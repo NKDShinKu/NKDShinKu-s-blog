@@ -1,6 +1,8 @@
 <script setup>
 import BannerPage from './components/BannerPage.vue'
 import CardPage from './components/CardPage.vue'
+
+
 </script>
 <template>
   <BannerPage></BannerPage>
