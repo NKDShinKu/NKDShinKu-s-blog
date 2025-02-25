@@ -46,9 +46,9 @@ const tags = ref([
 ]);
 // 随机颜色生成函数，保持浅色
 function getRandomColor() {
-  const r = Math.floor(Math.random() * 256) + 150;
-  const g = Math.floor(Math.random() * 256) + 150;
-  const b = Math.floor(Math.random() * 256) + 150;
+  const r = Math.floor(Math.random() * 256) - 50;
+  const g = Math.floor(Math.random() * 256) - 50;
+  const b = Math.floor(Math.random() * 256) - 50;
   return `rgb(${r}, ${g}, ${b})`;
 }
 // 标签云初始化
@@ -62,13 +62,13 @@ onMounted(() => {
   <div class="tagBox">
     <h2 class="title">一共{{ tags.length }}个标签</h2>
     <div class="content">
-      <a v-for="tag in tags" target="_blank" :key="tag.text" :href="tag.href" class="tag" :style="{ backgroundColor: tag.color }">
+      <a v-for="tag in tags" target="_blank" :key="tag.text" :href="tag.href" class="tag" :style="{ color: tag.color }">
         {{ tag.text }}
       </a>
     </div>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
 /* 标签云样式 */
 .tagBox {
   width: 80%;
@@ -77,7 +77,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   .title {
-    font-size: 20px;
+    font-size: 24px;
     color: rgba(119, 119, 119);
     margin-bottom: 30px;
   }
@@ -88,11 +88,8 @@ onMounted(() => {
     .tag {
       margin: 8px 5px;
       padding: 5px 8px;
-      font-size: 12px;
-      border-radius: 20px;
-      transition: transform 0.3s ease;
-      /* // text-decoration: none; 去掉默认的链接下划线 */
-      color: rgba(119, 119, 119); /* 文字颜色 */
+      font-size: 20px;
+      transition: all 0.2s ease-in;
     }
     .tag:hover {
       transform: scale(1.2);

@@ -1,7 +1,7 @@
 <script setup>
 import gsap from 'gsap'
 import { onMounted } from 'vue'
-// import ciallo from '@/assets/audio/ciallo.aac'
+import ciallo from '@/assets/audio/ciallo.aac'
 
 onMounted(() => {
   const texts = document.querySelectorAll('.text')
@@ -37,7 +37,7 @@ onMounted(() => {
   content.addEventListener('click', (event) => {
     const contentRect = content.getBoundingClientRect(); // 获取 .content 的位置和尺寸
     const clickText = document.createElement('p');
-    clickText.textContent = "404NotFound";
+    clickText.textContent = "Ciallo～(∠・ω< )⌒☆";
     // Ciallo～(∠・ω< )⌒☆
     clickText.style.position = 'absolute';
 
@@ -64,8 +64,8 @@ onMounted(() => {
     });
 
     // 每次点击都播放一个新的音效实例
-    // const audio = new Audio(ciallo); // 替换为你指定的音频文件路径
-    // audio.play();
+    const audio = new Audio(ciallo); // 替换为你指定的音频文件路径
+    audio.play();
   });
 })
 </script>
@@ -74,7 +74,7 @@ onMounted(() => {
   <div class="box">
     <h1>内容丢失了哦！！！！！！！！！！！！！！！</h1>
     <div class="content">
-      <p class="text" v-for="i in 20" :key="i">404NotFound</p>
+      <p class="text" v-for="i in 20" :key="i">Ciallo～(∠・ω< )⌒☆</p>
       <!-- Ciallo～(∠・ω&lt; )⌒☆ -->
     </div>
   </div>

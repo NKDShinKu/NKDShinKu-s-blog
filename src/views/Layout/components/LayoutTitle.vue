@@ -1,5 +1,17 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+    // 通过 route 的 meta.title 获取当前页面的标题
+  const pageTitle = computed(() => {
+    if (route.meta.title) {
+      return typeof route.meta.title === 'function'
+        ? route.meta.title(route)
+        : route.meta.title;
+    }
+    return 'NKDShinKu';
+  });
 
 // 打字机需要的状态和数据
 const words = ["祈祷明天对于你来说又是美好的一天", "望向苍蓝的彼端", "仰望天空，注视天空，答案就在那里"]; // "原神启动！", "星穹铁道启动！", "绝区零启动！", "千恋万花启动！", "Ciallo～(∠・ω< )⌒☆"
@@ -49,7 +61,7 @@ onMounted(() => {
 
 <template>
   <div class="title">
-    <h1>NKDShinKu</h1>
+    <h1>{{ pageTitle }}</h1>
     <div class="textBox">
       <h3 class="text">{{ currentText }}</h3> <!-- 显示逐字打出的文本 -->
       <h3 class="caret">|</h3> <!-- 光标 -->

@@ -1,32 +1,168 @@
-<script setup>
-</script>
 <template>
-  <div class="textBox">
-    <h3>渐进式框架</h3>
-    <p>Vue 是一个框架，也是一个生态。其功能覆盖了大部分前端开发常见的需求。但 Web 世界是十分多样化的，不同的开发者在 Web 上构建的东西可能在形式和规模上会有很大的不同。考虑到这一点，Vue 的设计非常注重灵活性和“可以被逐步集成”这个特点。根据你的需求场景，你可以用不同的方式使用 Vue：</p>
-    <p>* 无需构建步骤，渐进式增强静态的 HTML</p>
-    <p>* 在任何页面中作为 Web Components 嵌入</p>
-    <p>* 单页应用 (SPA)</p>
-    <p>* 全栈 / 服务端渲染 (SSR)</p>
-    <p>* Jamstack / 静态站点生成 (SSG)</p>
-    <p>* 开发桌面端、移动端、WebGL，甚至是命令行终端中的界面</p>
-    <p>如果你是初学者，可能会觉得这些概念有些复杂。别担心！理解教程和指南的内容只需要具备基础的 HTML 和 JavaScript 知识。即使你不是这些方面的专家，也能够跟得上。</p>
-    <p>如果你是有经验的开发者，希望了解如何以最合适的方式在项目中引入 Vue，或者是对上述的这些概念感到好奇，我们在使用 Vue 的多种方式中讨论了有关它们的更多细节。</p>
-    <p>无论再怎么灵活，Vue 的核心知识在所有这些用例中都是通用的。即使你现在只是一个初学者，随着你的不断成长，到未来有能力实现更复杂的项目时，这一路上获得的知识依然会适用。如果你已经是一个老手，你可以根据实际场景来选择使用 Vue 的最佳方式，在各种场景下都可以保持同样的开发效率。这就是为什么我们将 Vue 称为“渐进式框架”：它是一个可以与你共同成长、适应你不同需求的框架。</p>
+  <div class="markdown-container">
+    <!-- Markdown 内容 -->
+    <div class="markdown-content" v-html="html" v-highlight></div>
+    <!-- 目录 -->
+    <div class="toc">
+      <h2>目录</h2>
+      <ul>
+        <li
+          v-for="item in toc"
+          :key="item.anchor"
+          :class="['toc-item', { active: activeAnchor === item.anchor }]"
+          :style="{ marginLeft: `${(item.level - 1) * 16}px` }"
+        >
+          <a :href="`#${item.anchor}`" @click.prevent="scrollToAnchor(item.anchor)">
+            {{ item.title }}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+
   </div>
 </template>
-<style scoped>
-.textBox {
-  height: 2000px;
-  padding: 30px;
-  h3 {
-    font-size: 20px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  p {
-    font-size: 16px;
-    margin-bottom: 20px;
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import MarkdownIt from 'markdown-it'
+import markdownItAnchor from 'markdown-it-anchor'
+
+// 初始化 MarkdownIt
+const md = new MarkdownIt().use(markdownItAnchor, {
+  level: [1, 2, 3], // 只处理 h1, h2, h3
+  slugify: (s) => String(s).trim().toLowerCase().replace(/\s+/g, '-'), // 生成锚点ID
+  permalink: true, // 生成锚点链接
+  permalinkClass: 'header-anchor', // 锚点链接的class
+  permalinkSymbol: '#' // 锚点链接的符号
+})
+
+// 数据
+const html = ref('') // 解析后的 HTML
+const toc = ref([]) // 目录
+const activeAnchor = ref('') // 当前高亮的锚点
+
+// 加载 Markdown 文件
+const loadMarkdown = async () => {
+  const response = await fetch('/md/test.md') // 加载 Markdown 文件
+  const content = await response.text()
+  const { html: parsedHtml, toc: parsedToc } = parseMarkdown(content)
+  html.value = parsedHtml
+  toc.value = parsedToc
+}
+
+// 解析 Markdown 并生成目录
+const parseMarkdown = (content) => {
+  const tokens = md.parse(content, {})
+  const toc = []
+
+  // 提取标题生成目录
+  tokens.forEach((token) => {
+    if (token.type === 'heading_open') {
+      const level = parseInt(token.tag.slice(1), 10) // 获取标题级别（h1, h2, h3）
+      const title = tokens[tokens.indexOf(token) + 1].content // 获取标题内容
+      const anchor = token.attrs?.find((attr) => attr[0] === 'id')?.[1] // 获取锚点ID
+      if (anchor) {
+        toc.push({ level, title, anchor })
+      }
+    }
+  })
+
+  // 解析 Markdown 为 HTML
+  const html = md.render(content)
+
+  return { html, toc }
+}
+
+// 跳转到锚点
+const scrollToAnchor = (anchor) => {
+  const target = document.getElementById(anchor)
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth' })
   }
 }
+
+// 监听滚动事件，更新高亮锚点
+const handleScroll = () => {
+  const headings = toc.value.map((item) => document.getElementById(item.anchor))
+  const scrollTop = window.scrollY || document.documentElement.scrollTop
+
+  for (let i = headings.length - 1; i >= 0; i--) {
+    if (headings[i].offsetTop <= scrollTop + 100) {
+      activeAnchor.value = headings[i].id
+      break
+    }
+  }
+}
+
+// 生命周期钩子
+onMounted(() => {
+  loadMarkdown()
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+</script>
+
+<style scoped lang="scss">
+.markdown-container {
+  display: flex;
+  .markdown-content {
+    min-height: 2000px;
+    padding: 30px;
+    :deep(*)  {
+      margin-bottom: 10px;
+    }
+    :deep(li) {
+      list-style: disc;
+      margin-left: 2em;
+    }
+    :deep(h1),:deep(h2),:deep(h3),:deep(h4),:deep(h5) {
+      margin: 20px 0 15px 0;
+    }
+    :deep(p) {
+      font-size: 16px;
+    }
+  }
+}
+
+.toc {
+  width: 240px;
+  margin-right: 20px;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  margin-top: 30px;
+  font-size: 16px;
+}
+
+.toc ul {
+  list-style: none;
+  padding: 0;
+}
+
+.toc-item {
+  margin: 8px 0;
+}
+
+.toc-item a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.toc-item a:hover {
+  color: var(--theme-bkcolor-mine);
+}
+
+.toc-item.active a {
+  color: var(--theme-color-mine);
+  font-weight: bold;
+}
+
+.markdown-content {
+  flex: 1;
+}
 </style>
+

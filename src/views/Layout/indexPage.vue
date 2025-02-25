@@ -3,7 +3,7 @@ import LayoutHeader from './components/LayoutHeader.vue'
 import LayoutNav from './components/LayoutNav.vue'
 import LayoutFooter from './components/LayoutFooter.vue'
 import LayoutTitle from './components/LayoutTitle.vue'
-import LayoutDetail from './components/LayoutDetail.vue'
+// import LayoutDetail from './components/LayoutDetail.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -39,10 +39,10 @@ console.log(route)
           </router-view>
 
         </div>
-        <div class="nav" ref="myElement">
+        <div v-if="route.name !== 'details'" class="nav" ref="myElement">
           <!-- :class="{fixed: navPosition.top < 60}" -->
-           <LayoutDetail v-if="route.name === 'details'"></LayoutDetail>
-          <LayoutNav v-else></LayoutNav>
+          <LayoutNav></LayoutNav>
+          <!-- <layout-detail></layout-detail> -->
         </div>
       </div>
     </div>
@@ -125,7 +125,8 @@ console.log(route)
     .content {
       background-color: var(--theme-background-color-content);
       box-shadow: 0 0 10px var(--theme-box-shadow);
-      width: 75%;
+      min-width: 75%;
+      max-width: 100%;
       border-radius: 15px;
       margin: 0 15px 20px 25px;
       // height: 1800px;

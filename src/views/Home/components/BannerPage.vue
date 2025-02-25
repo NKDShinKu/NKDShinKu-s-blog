@@ -12,7 +12,7 @@ import bannerImg from '@/assets/images/banner1.jpg'
     </el-carousel>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
 .banner {
   width: 85%;
   margin: 0 auto;

@@ -8,6 +8,7 @@
     --theme-background-color-content: rgba(250, 250, 250, 0.6);  /* 内容背景色 */
 
     --theme-box-shadow: rgba(0, 0, 0, 0.1);  /* 阴影颜色 */
+    --theme-box-bkcolor: rgba(255, 255, 255, 0.5); /* 盒子背景色 */
 
     --theme-header-bkcolor-1: rgba(253, 253, 253, 0.3);  /* 头部标签栏背景色（默认） */
     --theme-header-bkcolor-2: rgba(0, 0, 0, 0.05);   /* 头部标签栏背景色（视口超过内容部分） */
@@ -26,5 +27,5 @@
     --theme-color: #3498db; /* 明亮主题色 */
     --theme-background-color: #f0f0f0; /* 明亮背景色 */
     --theme-font-color: #333333; /* 明亮字体颜色 */
-  }
+  } 
   
